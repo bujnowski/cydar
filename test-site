@@ -1,0 +1,31 @@
+#!/bin/bash
+# test the status of our web server
+#
+# Usage: run this script with no arguments
+#
+#
+# this is the address of our http site
+# it could be a parameter passed to this script at a later date
+http_site=http://ec2-13-59-183-205.us-east-2.compute.amazonaws.com
+
+# the status of our http site
+# NB. can use wget or curl, with equally good results
+#
+# When the curl query is successful, it returns the contents of our /version.txt file
+# use a 3-second timeout, in case the server is down
+status=`timeout 3s curl -s $http_site`
+
+# current nginx version
+version=1.10.2
+
+# if we get nothing from our query, this value will stay unchanged
+is_up=UNREACHABLE
+
+# update the above variable if the status query returns a non-empty string, equal to our nnginx version
+if [ "$status" == "$version" ]
+then
+	is_up="UP, version $version"
+fi
+
+echo "Testing $http_site on `date` - the status is $is_up"
+
